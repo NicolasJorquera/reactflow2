@@ -1,0 +1,167 @@
+.react-flow {
+    background: #252525;
+  }
+
+.react-flow__node{
+    border-color: #D9D9D9;
+    background: #252525;
+    color: #D9D9D9;
+    border-radius: 10px;
+}
+
+.react-flow__minimap{
+    background: black;
+}
+
+.react-flow__node-simulatorN {
+  height: 290px;
+  width: 240px;
+  font-size: 12px;
+  background: #252525;
+  border: 3px solid #D9D9D9;
+  border-radius: 25px;
+  text-align: center;
+}
+.react-flow__node-firstSimulatorN{
+    height: 130px;
+    width: 240px;
+    font-size: 12px;
+    background: #252525;
+    border: 3px solid #D9D9D9;
+    border-radius: 25px;
+    text-align: center;
+    
+  }
+
+.react-flow__node-simulatorN:focus ,
+.react-flow__node-firstSimulatorN:focus{
+border: 3px solid #2196F3;
+    
+}
+
+.react-flow__edge-path,
+.react-flow__connection-path {
+  stroke: #D9D9D9;
+  color: black;
+  stroke-width: 3px;
+  fill: none;
+}
+path.react-flow__edge-path{
+    stroke: #D9D9D9;
+}
+
+
+.react-flow__edge-path-selector:hover { cursor: pointer }
+.react-flow__edge-path-selector:hover + .react-flow__edge-path, .react-flow__edge-path:hover  {
+    cursor: pointer;
+}
+.react-flow__edge-path-selector {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 40;
+}
+
+
+
+.react-flow__edge.selected .react-flow__edge-path{
+  stroke: #D9D9D9;
+}
+.react-flow__edge:focus .react-flow__edge-path,
+.react-flow__edge:focus-visible .react-flow__edge-path {
+    stroke: #2196F3;
+    stroke-width: 3px;
+}
+
+
+.fields{
+    text-align: left;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.titleField{
+    font-weight: 10;
+}
+
+.field{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom:10px;
+    align-items: center;
+    
+}
+
+.inputFields{
+    border-style: solid;
+    width: 50px;
+    border-radius: 10px;
+    padding: 5px;
+    border-color: #606060;
+    background: #252525;
+    color: #D9D9D9;
+    text-align: center;
+}
+.edgeWeight{
+    text-align:center;
+    border-style: solid;
+    width: 30px;
+    border-radius: 5px;
+    padding: 5px;
+    border-color: #606060;
+    background: #252525;
+    color: #D9D9D9;
+    font-size: large;
+}
+.inputFields:focus,
+.edgeWeight:focus{
+    outline:#252525;
+}
+
+
+.wrapper {
+    flex-grow: 1;
+    height: 100%;
+  }
+
+  .react-flow__handle{
+    background: #252525;
+    width: 20px;
+    height: 20px;
+  }
+  
+  .react-flow__handle-left{
+    left: -12px;
+  }
+  .react-flow__handle-right{
+    right: -12px;
+  }
+
+  .button{
+    cursor: pointer;
+    border: solid;
+    border-radius: 8px;
+    border-color: #D9D9D9;
+    background-color:#D9D9D9;
+  }
+
+  .arrivalModalBox{
+    border-radius: 45px;
+    background-color: #252525;
+  }
+
+.simulateButton{
+  left: 46%;
+  bottom: 5%;
+  position: absolute;
+  z-index: 10;
+}
+
+.simulateButton button{
+  height: 50px;
+  width: 140px;
+  border-radius: 20px;
+  cursor: pointer;
+  background-color: #2196F3;
+  border: #2196F3;
+  color:white;
+  font-size: 30px;
+}
