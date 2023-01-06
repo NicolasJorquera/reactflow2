@@ -25,19 +25,15 @@ export default memo(({ data, isConnectable }) => {
           <h8 style={{marginRight: '20px'}}>Limite Cola</h8>
           <input className='inputFields' value={data.fields.limiteCola} onChange={( e)=>{data.changeNode(data.id, 'limiteCola', e.target.value)}}/>
         </div>
-        <div className='field'>
-          <h8 style={{marginRight: '20px'}}>Step Rendimiento (min)</h8>
-          <input className='inputFields' value={data.fields.stepRendimiento} onChange={( e)=>{data.changeNode(data.id, 'stepRendimiento', e.target.value)}}/>
-        </div>
       </div>
       <div className='fields'>
         <h8 className='titleField'>Duracion Visitas (Normal)</h8>
         <div className='field'>
-          <h8 style={{marginRight: '20px'}}>Promedio</h8>
+          <h8 style={{marginRight: '20px'}}>Promedio (ms)</h8>
           <input className='inputFields' value={data.fields.promedio} onChange={( e)=>{data.changeNode(data.id, 'promedio', e.target.value)}}/>
         </div>
         <div className='field'>
-          <h8 style={{marginRight: '20px'}}>Desviacion estandar</h8>
+          <h8 style={{marginRight: '20px'}}>Desviacion estandar (ms)</h8>
           <input className='inputFields' value={data.fields.desviacionEstandar} onChange={( e)=>{data.changeNode(data.id, 'desviacionEstandar', e.target.value)}}/>
         </div>
       </div>

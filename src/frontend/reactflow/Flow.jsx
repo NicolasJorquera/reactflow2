@@ -15,6 +15,7 @@ import ArrivalModal from './ArrivalModal';
 
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 
@@ -54,15 +55,14 @@ const rawData = [
 
 
 
-const AddNodeOnEdgeDrop = () => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [open, setOpen] = React.useState(false);
+const AddNodeOnEdgeDrop = (props) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const reactFlowWrapper = useRef(null);
   const connectingNodeId = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [ chartData, setChartData ] = useState([]);
-  const [ isLoaded, setIsLoaded ] =  useState(false);
   const [ isDataChanged, setIsDataChanged ] =  useState(true); 
   const { project } = useReactFlow();
 
@@ -86,15 +86,7 @@ const AddNodeOnEdgeDrop = () => {
     );
   }
 
-  useEffect(() => {
-    setIsLoaded(false)
-    setChartData(rawData)
-
-    setTimeout(() => {
-        setIsLoaded(true)    
-    }, 100);
   
-  }, []); 
 
   const initialNodes = [
     {
@@ -110,12 +102,20 @@ const AddNodeOnEdgeDrop = () => {
     setNodes(initialNodes);
   },[])
 
+  useEffect(() => {
+    setNodes(initialNodes);
+    setChartData(rawData)
+  
+  }, []); 
+
   
 
   const changeEdge = (id, value) => {
+      
+    
     setEdges((eds) => 
       eds.map((edge) => {
-        if (edge.id === id) {
+        if (edge.id === id && edge.source != 0) {
           let label = edge.data.label;
           label = value;
           edge.data = {
@@ -129,9 +129,9 @@ const AddNodeOnEdgeDrop = () => {
     );
   }
 
-  const onConnectStart = useCallback((_, { nodeId }) => {
+  const onConnectStart = (_, { nodeId }) => {
     connectingNodeId.current = nodeId;
-  }, []);
+  }
 
 
   const onConnectEnd =
@@ -139,17 +139,14 @@ const AddNodeOnEdgeDrop = () => {
       const targetIsPane = event.target.classList.contains('react-flow__pane');
       const targetIsNode = event.target.classList.contains('react-flow__handle-valid');
 
-      // let count = 0;
+      let count = 0;
+      edges.map(edge => {
+        if (edge.source == '0') {
+          count = count + 1;
+        }
+      })
 
-      // setEdges((edges) => {
-      //   edges.map((edge)=> {
-      //     if (edge.source == '0') {
-      //       count = count + 1;
-      //     }
-      //   })
-      // })
-
-      if (targetIsPane) {
+      if (targetIsPane && (( connectingNodeId.current == '0' && count == 0) || connectingNodeId.current != '0')) {
         // we need to remove the wrapper bounds, in order to get the correct position
         const id = getId();
         const newNode = {
@@ -157,7 +154,7 @@ const AddNodeOnEdgeDrop = () => {
           // we are removing the half of the node width (75) to center the new node
           type: 'simulatorN',
           position: project({ x: event.clientX  , y: event.clientY - 100}),
-          data: { id: id, fields:{limiteConcurrencia: '200', limiteCola: '100', stepRendimiento: '5', promedio: '20', desviacionEstandar: '5'}, changeNode:changeNode},
+          data: { id: id, fields:{limiteConcurrencia: '200', limiteCola: '100', promedio: '20', desviacionEstandar: '5'}, changeNode:changeNode},
           
         };
         const newEdge = {
@@ -165,7 +162,7 @@ const AddNodeOnEdgeDrop = () => {
           source: connectingNodeId.current, 
           target: id, 
           type: 'simulatorE', 
-          data:{label: '100', changeEdge: changeEdge}
+          data:{label: '1', changeEdge: changeEdge}
         }
 
         setNodes((nodes) => nodes.concat(newNode));
@@ -181,7 +178,7 @@ const AddNodeOnEdgeDrop = () => {
           source: connectingNodeId.current, 
           target: id, 
           type: 'simulatorE', 
-          data:{label: '100', changeEdges: changeEdge}
+          data:{label: '1', changeEdges: changeEdge}
         }
         setEdges((edges) => 
           edges.concat(newEdge)
@@ -199,8 +196,10 @@ const AddNodeOnEdgeDrop = () => {
     
   };
 
-  const handleClose = () => setOpen(false);
-  const id = open ? "simple-popover" : undefined;
+  const handleClose = () => {
+    setOpen(false)
+    setIsLoading(false)
+  };
 
   
 
@@ -216,8 +215,12 @@ const AddNodeOnEdgeDrop = () => {
   }
 
   const simulate = () => {
-    console.log(nodes);
-    console.log(edges);
+    setIsLoading(true);  
+    nodes[0].data.fields.arrivals = chartData;
+    let nodesJSON = JSON.stringify(nodes);
+    let edgesJSON = JSON.stringify(edges);
+    props.props.handleSimulateButton(nodesJSON, edgesJSON);
+    
   }
 
 
@@ -252,11 +255,24 @@ const AddNodeOnEdgeDrop = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style} className="arrivalModalBox">
-          {isLoaded && 
-            <ArrivalModal data={chartData} onHandleChange={onHandleChange}/>
-          }
+          <ArrivalModal data={chartData} onHandleChange={onHandleChange}/>
         </Box>
       </Modal>
+
+
+      <Modal
+        open={isLoading}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={{style}} className='loader'>
+          <CircularProgress style={{transform: 'translate(-50%, -50%);'}} />
+        </Box>
+      </Modal>
+      
+
+      
       
       
       
@@ -265,8 +281,8 @@ const AddNodeOnEdgeDrop = () => {
 };
 
 
-export default () => (
+export default (props) => (
   <ReactFlowProvider>
-    <AddNodeOnEdgeDrop />
+    <AddNodeOnEdgeDrop props={props} />
   </ReactFlowProvider>
 );

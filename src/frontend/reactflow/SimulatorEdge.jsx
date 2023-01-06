@@ -57,7 +57,8 @@ export default function SimulatorEdge({
         width={foreignObjectSizeWidth}
         height={foreignObjectSizeHeight}
         x={edgeCenterX - foreignObjectSizeWidth / 2 }
-        y={edgeCenterY - foreignObjectSizeHeight / 2 }
+        y={edgeCenterY - foreignObjectSizeHeight / 2  }
+        style={{display:'block', textAlign: 'center'}}
       >
           <input
           className="edgeWeight"

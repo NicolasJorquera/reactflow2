@@ -17,7 +17,7 @@ export default memo(({ data, isConnectable }) => {
       </div>
       <div className='fields'>
         <div className='field'>
-          <h8 style={{marginRight: '20px'}}>Duracion de Prueba</h8>
+          <h8 style={{marginRight: '20px'}}>Duracion de Prueba (segundos)</h8>
           <input className='inputFields' value={data.fields.duracionPrueba} onChange={( e)=>{data.changeNode(data.id, 'duracionPrueba', e.target.value)}}/>
         </div>
       </div>

@@ -1,0 +1,49 @@
+.background{
+    background-color: #252525;
+    height: 100%;
+    display: flex;
+}
+
+.card{
+    height: '100%'; 
+    width: '100%';
+    margin: '20px';
+    border-radius: '30px';
+    background-color: #D9D9D9;
+    border-color: #D9D9D9;
+}
+
+.buttonB{
+    cursor: pointer;
+    border: solid;
+    border-radius: 8px !important;
+    border-color: #2196F3;
+    background-color:#2196F3;
+    color: white;
+    padding: 5px;
+    font-size: 17px;
+  }
+
+.nodeCell{
+    color:#D9D9D9 !important;
+    font-size: 30px !important;
+    border: 0 !important;
+    align-content: center;
+    display: block;
+    
+}
+.nodeRow:hover{
+    background-color: #575757;
+    border-radius: 10px;
+}
+  
+.chartM{
+    height: 100%;
+    width: 100%;
+}
+
+canvas{
+    height: 100%;
+    width: 100%;
+    color: #03c122;
+}

@@ -14,7 +14,7 @@
 }
 
 .react-flow__node-simulatorN {
-  height: 290px;
+  height: 250px;
   width: 240px;
   font-size: 12px;
   background: #252525;
@@ -149,7 +149,7 @@ path.react-flow__edge-path{
   }
 
 .simulateButton{
-  left: 46%;
+  left: 45%;
   bottom: 5%;
   position: absolute;
   z-index: 10;
@@ -165,3 +165,8 @@ path.react-flow__edge-path{
   color:white;
   font-size: 30px;
 }
+
+.react-flow__panel{
+  font-size: 0;
+}
+

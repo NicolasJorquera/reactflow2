@@ -39,6 +39,11 @@ export default function ArrivalModal(props) {
       options: {
         scales: {
           yAxis: {
+            title: {
+              display: true,
+              text: 'Llegadas por segundo',
+              color: '#D9D9D9', 
+            },
             max: maxY,
             ticks: { 
               color: '#D9D9D9', 
@@ -69,9 +74,7 @@ export default function ArrivalModal(props) {
         },
         plugins: {
           legend: {
-            labels: {
-              color: '#D9D9D9'
-            }
+            display: false,
           },
           dragData: {
             round: 0,
