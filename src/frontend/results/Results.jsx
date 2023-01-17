@@ -5,13 +5,11 @@ import NodesList from './NodesList';
 import SimConfig from './SimConfig';
 import MiniMap from './MiniMap';
 import NodeCharts from './NodeCharts';
+import NodesPath from '../../backend/NodesPath';
 
 
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
-import CircularProgress from '@mui/material/CircularProgress';
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Unstable_Grid2';
 
 
 const style = {
@@ -25,10 +23,26 @@ const style = {
     p: 4,
   };
   
+function findLeaves(node, leaves) {
+    if (node.children.length === 0) {
+        // si el nodo no tiene hijos, es una hoja
+        leaves.push(node.value); // añadir el valor del nodo al arreglo de hojas
+    } else {
+        // recorrer recursivamente cada hijo
+        for (let i = 0; i < node.children.length; i++) {
+        findLeaves(node.children[i], leaves);
+        }
+    }
+}
 
 const Results = (props) => {
     const [nodeID, setNodeID] = useState('');
     const [showCharts, setShowCharts] = useState(false);
+
+    let [nodesPath, tree] = NodesPath(props.edges)
+
+    let leaves = [];
+    findLeaves(tree, leaves);
 
     const changeNode = (nodeID) => {
         setNodeID(nodeID);  
@@ -48,11 +62,11 @@ const Results = (props) => {
                         <SimConfig nodes={props.nodes} />
                     </div>
                     <div style={{width: '70%', height: '100%', display: 'flex'}}>
-                        <MiniMap nodes={props.nodes} edges={props.edges} />
+                        <MiniMap nodes={props.nodes} edges={props.edges} handleBack={props.handleBack} />
                     </div>
                 </div>
                 <div style={{width: '100%', height: '50%', display: 'flex'}}>
-                    <Chart simulateResults={props.simulateResults} />
+                    <Chart simulateResults={props.simulateResults} root={tree} lastNodes={leaves} />
                 </div>  
             </div>
             <div style={{width: '50%', height: '100%', display: 'flex'}}>

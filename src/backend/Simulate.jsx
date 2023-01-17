@@ -1,6 +1,9 @@
-import React, { useCallback, useRef, useEffect, useState } from 'react';
+import React, { useCallback, useRef, useEffect, useState, useMemo } from 'react';
+import './Simulate.css';
 import NodesPath from './NodesPath';
 import Node from './Node';
+import SimulateProcessing from './SimulateProcessing';
+import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 
@@ -31,7 +34,7 @@ function poissonRandom(lambda) {
     return k - 1;
   }
 
-  const findConcurrenciaCola = (visitasGlobales, nodeID) => {
+const findConcurrenciaCola = (visitasGlobales, nodeID) => {
     let concurrencia = 0;
     let cola = 0;
     visitasGlobales.forEach(visita => {
@@ -90,13 +93,13 @@ const arrivalSteps = (steps, duracionPrueba) => {
     
 }
 
-const firstNodePoisson = (meanLlegadas, llegadas) => {
+const firstNodePoisson = (meanLlegadas, llegadas, firstNode) => {
     let visitas = poissonRandom(meanLlegadas.Value);
-    if (!llegadas['1']) {
-        llegadas['1'] = [];
+    if (!llegadas[firstNode]) {
+        llegadas[firstNode] = [];
     }
     
-    llegadas['1'].push(visitas);
+    llegadas[firstNode].push(visitas);
     return visitas;
 }
 function normalRandom(mean, standardDeviation) {
@@ -150,12 +153,13 @@ const createVisitas = (visitas, visitasGlobales, nodes, nodeID) => {
 
 //recorrer el path (aqui se corre la logica de cada nodo)
 const runPath = (nodesPath, nodes, meanLlegadas, llegadas, visitasGlobales, finalizadas, tree) => {
+    let firstNode = tree.children[0].value;
     nodesPath.forEach(nodeID => {
 
         let visitas = -1;
-        if (nodeID == '1') {
-            visitas = firstNodePoisson(meanLlegadas, llegadas);
-            createVisitas(visitas, visitasGlobales, nodes, '1');
+        if (nodeID == firstNode) {
+            visitas = firstNodePoisson(meanLlegadas, llegadas, firstNode);
+            createVisitas(visitas, visitasGlobales, nodes, firstNode);
         }
 
         if (nodeID != '0') { // el nodo 0 solo tiene la informacion de la prueba y la tasa de llegadas a los primeros nodos
@@ -166,7 +170,7 @@ const runPath = (nodesPath, nodes, meanLlegadas, llegadas, visitasGlobales, fina
     });
 }
 
-function findLeaves(node, leaves) {
+const findLeaves = (node, leaves) => {
     if (node.children.length === 0) {
       // si el nodo no tiene hijos, es una hoja
       leaves.push(node.value); // añadir el valor del nodo al arreglo de hojas
@@ -297,7 +301,13 @@ const weightNodes = (root, nodes, edges) => {
 
 }
 
+
+
+
 const Simulate = (props) => {
+
+    let simulateResults;
+
     const steps = props.nodes[0].data.fields.arrivals;
     const duracionPrueba = props.nodes[0].data.fields.duracionPrueba;
     let stepsTime = arrivalSteps(steps, duracionPrueba);
@@ -307,59 +317,86 @@ const Simulate = (props) => {
     let llegadas = {};
     let finalizadas = {};
     let tiempoRespuesta = {};
-    let errores = {'1':[]};
-    let filtrados = {'1':[]};
-    let concurrencia = {'1':[]};
-    let cola = {'1':[]};
+    let errores = {};
+    let filtrados = {};
+    let concurrencia = {};
+    let cola = {};
 
     let [nodesPath, tree] = NodesPath(props.edges)
 
     let leaves = [];
     findLeaves(tree, leaves);
     weightNodes(tree, props.nodes, props.edges);
-
     let segundo = 1;
-    steps.forEach((step, i) => {
-        let timeStep = 1;
-        while (timeStep <= stepsTime[i]) {
-            console.log(segundo)
 
-            runPath(nodesPath, props.nodes, step, llegadas, visitas, finalizadas, tree);
+    
+    
+    useEffect(() => {
+        steps.forEach((step, i) => {
+            let timeStep = 1;
+            while (timeStep <= stepsTime[i]) {
+                console.log(segundo)
+
+                runPath(nodesPath, props.nodes, step, llegadas, visitas, finalizadas, tree);
+
+                checkFinish(visitas, leaves, errores, filtrados, concurrencia, cola, tiempoRespuesta, props.nodes);
+
+                segundo = segundo + 1;
+                timeStep = timeStep + 1;
+
+            }
+        });
+        while (visitas.length > 0) {
+            console.log(segundo);
+            runPath(nodesPath, props.nodes, 0, llegadas, visitas, finalizadas, tree);
 
             checkFinish(visitas, leaves, errores, filtrados, concurrencia, cola, tiempoRespuesta, props.nodes);
 
-            segundo = segundo + 1;
-            timeStep = timeStep + 1;
+            segundo++;
 
         }
-    });
-    while (visitas.length > 0) {
-        console.log(segundo);
-        runPath(nodesPath, props.nodes, 0, llegadas, visitas, finalizadas, tree);
-
-        checkFinish(visitas, leaves, errores, filtrados, concurrencia, cola, tiempoRespuesta, props.nodes);
-
-        segundo++;
-
-    }
 
 
-    let simulateResults = {
-        duracionPrueba: duracionPrueba,
-        tiempoTotal: segundo,
-        tiempoRespuesta: tiempoRespuesta,
-        concurrencia: concurrencia,
-        cola: cola,
-        errores: errores,
-        filtrados: filtrados,
-        llegadas: llegadas,
-        finalizadas: finalizadas,
-    };
-    props.handleSimulate(simulateResults);
+        simulateResults = {
+            duracionPrueba: duracionPrueba,
+            tiempoTotal: segundo,
+            tiempoRespuesta: tiempoRespuesta,
+            concurrencia: concurrencia,
+            cola: cola,
+            errores: errores,
+            filtrados: filtrados,
+            llegadas: llegadas,
+            finalizadas: finalizadas,
+        };
+        props.handleSimulate(simulateResults);
+
+    }, [])
+
+
+    const isLoading = useMemo( () => {
+        return simulateResults == undefined;
+        
+    }, [ simulateResults ] );
 
 
 
+    
 
+    return(
+        <div>
+            {/* <SimulateProcessing nodes={props.nodes} edges={props.edges} handleSimulate={props.handleSimulate} simulateResults={simulateResults}/> */}
+            {isLoading &&
+                <div className='loader'>
+                    <CircularProgress style={{ top: '50%', left: '50%', position: 'fixed'}} />
+                </div>
+            }
+        </div>
+        
+    )
+    
+    
+    
+    
 }
     
 

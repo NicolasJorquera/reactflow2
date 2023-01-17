@@ -28,7 +28,6 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: 700,
   border: '2px solid #000',
-  boxShadow: 24,
   p: 4,
 };
 
@@ -56,12 +55,14 @@ const rawData = [
 
 
 const AddNodeOnEdgeDrop = (props) => {
+
+  
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const reactFlowWrapper = useRef(null);
   const connectingNodeId = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState( (props.props.nodes)? props.props.nodes : []);
+  const [edges, setEdges, onEdgesChange] = useEdgesState((props.props.edges)? props.props.edges : []);
   const [ chartData, setChartData ] = useState([]);
   const [ isDataChanged, setIsDataChanged ] =  useState(true); 
   const { project } = useReactFlow();
@@ -86,8 +87,6 @@ const AddNodeOnEdgeDrop = (props) => {
     );
   }
 
-  
-
   const initialNodes = [
     {
       id: '0',
@@ -98,15 +97,15 @@ const AddNodeOnEdgeDrop = (props) => {
     },
   ];
 
-  useEffect(()=>{
-    setNodes(initialNodes);
-  },[])
-
-  useEffect(() => {
-    setNodes(initialNodes);
-    setChartData(rawData)
   
-  }, []); 
+
+  
+
+  // useEffect(() => {
+  //   setNodes(initialNodes);
+  //   setChartData(rawData)
+  
+  // }, []); 
 
   
 
@@ -128,6 +127,23 @@ const AddNodeOnEdgeDrop = (props) => {
       })
     );
   }
+
+  useEffect(()=>{
+    if (nodes.length == 0) {
+      setNodes(initialNodes);
+    }
+    nodes.forEach(node => {
+      node.data.changeNode = changeNode;
+    });
+
+    edges.forEach(edge => {
+      edge.data.changeEdge = changeEdge;
+    });
+
+
+    setChartData(rawData)
+    
+  },[])
 
   const onConnectStart = (_, { nodeId }) => {
     connectingNodeId.current = nodeId;
@@ -217,15 +233,15 @@ const AddNodeOnEdgeDrop = (props) => {
   const simulate = () => {
     setIsLoading(true);  
     nodes[0].data.fields.arrivals = chartData;
-    let nodesJSON = JSON.stringify(nodes);
-    let edgesJSON = JSON.stringify(edges);
-    props.props.handleSimulateButton(nodesJSON, edgesJSON);
+    // let nodes = JSON.stringify(nodes);
+    // let edges = JSON.stringify(edges);
+    props.props.handleSimulateButton(nodes, edges);
     
   }
 
 
   return (
-    <div className="wrapper" ref={reactFlowWrapper}>
+    <div className="wrapper" ref={reactFlowWrapper} >
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -256,18 +272,6 @@ const AddNodeOnEdgeDrop = (props) => {
       >
         <Box sx={style} className="arrivalModalBox">
           <ArrivalModal data={chartData} onHandleChange={onHandleChange}/>
-        </Box>
-      </Modal>
-
-
-      <Modal
-        open={isLoading}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={{style}} className='loader'>
-          <CircularProgress style={{transform: 'translate(-50%, -50%);'}} />
         </Box>
       </Modal>
       

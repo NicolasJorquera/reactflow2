@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import './App.css';
 import Flow from './frontend/reactflow/Flow';
 import Simulate from './backend/Simulate';
@@ -6,6 +6,7 @@ import Results from './frontend/results/Results';
 import DownloadImage from './backend/DownloadImage';
 
 import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
 import CircularProgress from '@mui/material/CircularProgress';
 
 
@@ -47,8 +48,8 @@ function App() {
 
 
   const handleSimulateButton = (nodes, edges) => {
-    nodes = JSON.parse(nodes);
-    edges = JSON.parse(edges);
+    // nodes = JSON.parse(nodes);
+    // edges = JSON.parse(edges);
     setNodes(nodes);
     setEdges(edges);
     if (nodes.length > 1 && edges.length > 0) {
@@ -66,16 +67,23 @@ function App() {
 
   }
 
+  const handleBack = (nodes, edges) => {
+    setNodes(nodes);
+    setEdges(edges);
+    setMenu('Flow');
+
+  }
+
   return (
-    <div style={{height: height}}>
-      {(menu == 'Flow') &&
-        <Flow handleSimulateButton={handleSimulateButton}  />
+    <div style={{height: height, position: 'relative'}}>
+      {(menu == 'Flow' || menu == 'Simulate') &&
+        <Flow nodes={nodes} edges={edges} handleSimulateButton={handleSimulateButton}  />
       }
       {(menu == 'Simulate') &&
         <Simulate nodes={nodes} edges={edges} handleSimulate={handleSimulate} />
       }
       {(menu == 'Results') &&
-        <Results simulateResults={simulateResults} nodes={nodes} edges={edges}/>
+        <Results simulateResults={simulateResults} nodes={nodes} edges={edges} handleBack={handleBack} />
       }
     </div>
   );

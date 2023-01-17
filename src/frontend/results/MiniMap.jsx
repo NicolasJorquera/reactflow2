@@ -1,10 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
+import './Results.css';
 import ReactFlow, { useNodesState, 
     useEdgesState,
     Background,
@@ -18,6 +15,7 @@ import SimulatorEdge from '../reactflow/SimulatorEdge';
 
 
 export default function MiniMap(props) {
+    
     const [nodes, setNodes, onNodesChange] = useNodesState(props.nodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(props.edges);
 
@@ -33,6 +31,9 @@ export default function MiniMap(props) {
             fitView
         >
             <Background variant={BackgroundVariant.Cross} gap={50} />
+            <div className='simulateButtonM'>
+                <button className='button' onClick={() => props.handleBack(nodes, edges)}>Volver</button>
+            </div>
         </ReactFlow>
         </Card>
     );

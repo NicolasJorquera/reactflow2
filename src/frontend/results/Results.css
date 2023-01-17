@@ -47,3 +47,33 @@ canvas{
     width: 100%;
     color: #03c122;
 }
+
+.simulateButtonM{
+    left: 41%;
+    bottom: 5%;
+    position: absolute;
+    z-index: 10;
+  }
+  
+.simulateButtonM button{
+    height: 30px;
+    width: 80px;
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: #2196F3;
+    border: #2196F3;
+    color:white;
+    font-size: 20px;
+}
+
+.react-flow__node-simulatorNM {
+    height: 70px;
+    width: 150px;
+    font-size: 30px;
+    background: #252525;
+    border: 3px solid #D9D9D9;
+    border-radius: 25px;
+    text-align: center;
+    display: grid;
+    align-content: space-around;
+}

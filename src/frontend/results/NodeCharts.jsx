@@ -214,7 +214,7 @@ function Histograma2(tiempoTotal, llegadas, finalizadas ) {
   // recorremos el arreglo de datos y contamos la frecuencia de cada valor
   let max = Math.max(...tiempoTotal);
   let min = Math.min(...tiempoTotal);
-  let range = 300;
+  let range = 5*60;// 5 minutos
   let c = min;
   while (c < max) {
     labels.push(c);
@@ -227,12 +227,15 @@ function Histograma2(tiempoTotal, llegadas, finalizadas ) {
           if (!frequencies1[i]) {
             frequencies1[i] = 0;
           }
-          frequencies1[i] = frequencies1[i] + value;
+          frequencies1[i] = frequencies1[i] + value/range;
         }
       }
       
     });
     
+  });
+  frequencies1.forEach((frequencie, i) => {
+    frequencies1[i] = frequencie;
   });
 
   finalizadas.forEach((value, j) => {
@@ -242,12 +245,16 @@ function Histograma2(tiempoTotal, llegadas, finalizadas ) {
           if (!frequencies2[i]) {
             frequencies2[i] = 0;
           }
-          frequencies2[i] = frequencies2[i] + value;
+          frequencies2[i] = frequencies2[i] + value/range;
         }
       }
       
     });
     
+  });
+
+  frequencies2.forEach((frequencie, i) => {
+    frequencies2[i] = frequencie;
   });
 
   // definimos los datos y opciones del gráfico
